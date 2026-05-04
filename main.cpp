@@ -1,6 +1,6 @@
 #include <iostream>
 #include <conio.h>
-
+#include <ctime>
 using namespace std;
 #define H 20
 #define W 15
@@ -124,6 +124,40 @@ void removeLine(){
     }
 }
 
+bool canRotate(char temp[4][4]) //xoay khoi 25730140
+{
+    for(int i = 0; i < 4; i++)
+        for(int j = 0; j < 4; j++)
+            if(temp[i][j] != ' ')
+            {
+                int xt = x + j;
+                int yt = y + i;
+
+                if(xt < 1 || xt >= W - 1 || yt >= H - 1)
+                    return false;
+
+                if(board[yt][xt] != ' ')
+                    return false;
+            }
+
+    return true;
+}
+
+void rotateBlock()
+{
+    char temp[4][4];
+
+    for(int i = 0; i < 4; i++)
+        for(int j = 0; j < 4; j++)
+            temp[j][3 - i] = blocks[b][i][j];
+
+    if(canRotate(temp))
+    {
+        for(int i = 0; i < 4; i++)
+            for(int j = 0; j < 4; j++)
+                blocks[b][i][j] = temp[i][j];
+    }
+}
 int main()
 {
     srand(time(0));
@@ -136,6 +170,7 @@ int main()
             if (c == 'a' && canMove(-1,0)) x--;
             if (c == 'd' && canMove( 1,0)) x++;
             if (c == 'x' && canMove( 0,1)) y++;
+            if (c == 'w') rotateBlock();
             if (c == 'q') break;
         }
         if (canMove(0,1)) y++;

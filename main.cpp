@@ -7,6 +7,7 @@ using namespace std;
 char board[H][W] = {};
 
 int x, y, b;
+int speed = 500;
 char blocks[][4][4] ={
         {{' ','I',' ',' '},
          {' ','I',' ',' '},
@@ -108,6 +109,28 @@ void draw(){
     for (int i = 0 ; i < H ; i++, cout<<endl)
         for (int j = 0 ; j < W ; j++) cout<<board[i][j];
 }
+void removeLine(){
+    int i,j;
+    for (i = H-2 ; i > 0 ; i-- ){
+        for (j = 0 ; j < W ; j++)
+            if (board[i][j] == ' ') break;
+        if (j == W){
+            for (int ii = i ; ii > 0 ; ii--)
+                for (int jj = 0; jj < W; jj++)
+                    board[ii][jj] = board[ii-1][jj];
+            i++;
+            
+            // --- TĂNG TỐC ---
+            if (speed > 100) {
+                speed -= 25; // Trừ đi 25ms mỗi lần ăn điểm để khối rơi nhanh hơn
+            }
+            // ----------------
+            
+            draw();
+            _sleep(200);
+        }
+    }
+}
 int main()
 {
     srand(time(0));
@@ -125,11 +148,12 @@ int main()
         if (canMove(0,1)) y++;
         else{
             block2Board();
+            removeLine();
             x = 5; y = 0; b = rand()%7;
         }
         block2Board();
         draw();
-        _sleep(500);
+        _sleep(speed);
     }
     return 0;
 }

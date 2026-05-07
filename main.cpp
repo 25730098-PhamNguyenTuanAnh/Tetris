@@ -8,6 +8,7 @@ char board[H][W] = {};
 
 int x, y, b;
 int speed = 500;
+int score = 0; // điểm khi xoá dòng của game
 char blocks[][4][4] ={
         {{' ','I',' ',' '},
          {' ','I',' ',' '},
@@ -109,12 +110,28 @@ void draw(){
     for (int i = 0 ; i < H ; i++, cout<<endl)
         for (int j = 0 ; j < W ; j++) cout<<board[i][j];
 }
-void removeLine(){
+
+/* addScore 
+* nếu xoá 1 dòng -> thêm 100 điểm
+* nếu xoá 2 dòng -> thêm 300 điểm
+* nếu xoá 3 dòng -> thêm 500 điểm
+* nếu xoá 4 dòng trở lên -> thêm 800 điểm
+*/
+void addScore(int removedLines){
+    if (removedLines == 1) score += 100;
+    else if (removedLines == 2) score += 300;
+    else if (removedLines == 3) score += 500;
+    else if (removedLines >= 4) score += 800;
+}
+
+int removeLine(){
+    int removed = 0; // diếm số dòng được xoá 
     int i,j;
     for (i = H-2 ; i > 0 ; i-- ){
         for (j = 0 ; j < W ; j++)
             if (board[i][j] == ' ') break;
         if (j == W){
+            removeLine++;
             for (int ii = i ; ii > 0 ; ii--)
                 for (int jj = 0; jj < W; jj++)
                     board[ii][jj] = board[ii-1][jj];
@@ -130,7 +147,9 @@ void removeLine(){
             _sleep(200);
         }
     }
+    return removed; // trả về số dòng được xoá để tính điểm cho game
 }
+
 int main()
 {
     srand(time(0));
@@ -148,7 +167,10 @@ int main()
         if (canMove(0,1)) y++;
         else{
             block2Board();
-            removeLine();
+            int removed = removeLine(); // nhận số dòng được xoá từ hàm removeLine()
+            if(removed >= 1){
+                addScore(removed); // cộng điểm
+            }
             x = 5; y = 0; b = rand()%7;
         }
         block2Board();

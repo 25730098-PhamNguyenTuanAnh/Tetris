@@ -12,7 +12,9 @@ A terminal-based Tetris game written in C++, built as the final project for clas
 | 4 | Phan Ngoc Tu Quyen | 25730139 | 25730139@ms.uit.edu.vn | [UIT-25730139-PhanNgocTuQuyen](https://github.com/UIT-25730139-PhanNgocTuQuyen) |
 | 5 | Nguyen Bao Anh | 25730097 | 25730097@ms.uit.edu.vn | [anh25730097](https://github.com/anh25730097) |
 
-**Project Board:** [View on GitHub](https://github.com/users/25730098-PhamNguyenTuanAnh/projects/1) used for tracking issues and planning
+## Project Board
+
+[View on GitHub](https://github.com/users/25730098-PhamNguyenTuanAnh/projects/1) used for tracking issues and planning
 
 ## About the Game
 

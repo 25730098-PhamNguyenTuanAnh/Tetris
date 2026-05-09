@@ -7,6 +7,7 @@ using namespace std;
 char board[H][W] = {};
 
 int x, y, b;
+int speed = 500;
 char current[4][4];
 char blocks[][4][4] ={
         {{' ','I',' ',' '},
@@ -114,6 +115,28 @@ void draw(){
     for (int i = 0 ; i < H ; i++, cout<<endl)
         for (int j = 0 ; j < W ; j++) cout<<board[i][j];
 }
+void removeLine(){
+    int i,j;
+    for (i = H-2 ; i > 0 ; i-- ){
+        for (j = 0 ; j < W ; j++)
+            if (board[i][j] == ' ') break;
+        if (j == W){
+            for (int ii = i ; ii > 0 ; ii--)
+                for (int jj = 0; jj < W; jj++)
+                    board[ii][jj] = board[ii-1][jj];
+            i++;
+
+            // --- LOGIC TĂNG TỐC ---
+            if (speed > 100) {
+                speed -= 15; // Trừ đi 15ms mỗi lần ăn điểm để khối rơi nhanh hơn
+            }
+            // ----------------------
+
+            draw();
+            _sleep(200);
+        }
+    }
+}
 bool canRotate(char temp[4][4]) //xoay khoi 25730140
 {
     for(int i = 0; i < 4; i++)
@@ -167,12 +190,13 @@ int main()
         if (canMove(0,1)) y++;
         else{
             block2Board();
+            removeLine();
             x = 5; y = 0; b = rand()%7;
             spawnBlock();
         }
         block2Board();
         draw();
-        _sleep(500);
+        _sleep(speed);
     }
     return 0;
 }

@@ -6,7 +6,14 @@ using namespace std;
 
 char board[H][W] = {};
 
-int b;
+const int SCORE_SINGLE = 100;
+const int SCORE_DOUBLE = 300;
+const int SCORE_TRIPLE = 500;
+const int SCORE_TETRIS = 800;
+
+const int SPEED_STEP = 15;
+
+int blockType;
 int speed = 500;
 int score = 0;
 char blocks[][4][4] ={
@@ -97,10 +104,10 @@ void draw()
 
 void addScore(int removedLines)
 {
-    if (removedLines == 1) score += 100;
-    else if (removedLines == 2) score += 300;
-    else if (removedLines == 3) score += 500;
-    else if (removedLines >= 4) score += 800;
+    if (removedLines == 1) score += SCORE_SINGLE;
+    else if (removedLines == 2) score += SCORE_DOUBLE;
+    else if (removedLines == 3) score += SCORE_TRIPLE;
+    else if (removedLines >= 4) score += SCORE_TETRIS;
 }
 
 int removeLine()
@@ -125,7 +132,7 @@ int removeLine()
             i++;
 
             if (speed > 100)
-                speed -= 15;
+                speed -= SPEED_STEP;
 
             draw();
             _sleep(200);
@@ -141,8 +148,8 @@ int main()
 
     Blocks currentBlock;
 
-    b = rand() % 7;
-    currentBlock.spawn(blocks, b);
+    blockType = rand() % 7;
+    currentBlock.spawn(blocks, blockType);
 
     initBoard();
 
@@ -186,8 +193,8 @@ int main()
             }
 
             currentBlock.setPosition(5, 0);
-            b = rand() % 7;
-            currentBlock.spawn(blocks, b);
+            blockType = rand() % 7;
+            currentBlock.spawn(blocks, blockType);
         }
 
         currentBlock.toBoard();

@@ -13,7 +13,7 @@ const int SCORE_TETRIS = 800;
 
 const int SPEED_STEP = 15;
 
-int b;
+int blockType;
 int speed = 500;
 int score = 0;
 char blocks[][4][4] ={
@@ -148,8 +148,8 @@ int main()
 
     Blocks currentBlock;
 
-    b = rand() % 7;
-    currentBlock.spawn(blocks, b);
+    blockType = rand() % 7;
+    currentBlock.spawn(blocks, blockType);
 
     initBoard();
 
@@ -193,8 +193,8 @@ int main()
             }
 
             currentBlock.setPosition(5, 0);
-            b = rand() % 7;
-            currentBlock.spawn(blocks, b);
+            blockType = rand() % 7;
+            currentBlock.spawn(blocks, blockType);
         }
 
         currentBlock.toBoard();

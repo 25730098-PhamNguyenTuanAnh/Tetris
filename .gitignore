@@ -1,0 +1,10 @@
+# Code::Blocks build artifacts
+bin/
+obj/
+Tetris.depend
+Tetris.layout
+
+# Compiled binaries and object files
+*.exe
+*.o
+*.obj

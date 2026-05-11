@@ -11,6 +11,8 @@ const int SCORE_DOUBLE = 300;
 const int SCORE_TRIPLE = 500;
 const int SCORE_TETRIS = 800;
 
+const int SPEED_STEP = 15;
+
 int b;
 int speed = 500;
 int score = 0;
@@ -130,7 +132,7 @@ int removeLine()
             i++;
 
             if (speed > 100)
-                speed -= 15;
+                speed -= SPEED_STEP;
 
             draw();
             _sleep(200);

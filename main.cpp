@@ -6,6 +6,11 @@ using namespace std;
 
 char board[H][W] = {};
 
+const int SCORE_SINGLE = 100;
+const int SCORE_DOUBLE = 300;
+const int SCORE_TRIPLE = 500;
+const int SCORE_TETRIS = 800;
+
 int b;
 int speed = 500;
 int score = 0;
@@ -97,10 +102,10 @@ void draw()
 
 void addScore(int removedLines)
 {
-    if (removedLines == 1) score += 100;
-    else if (removedLines == 2) score += 300;
-    else if (removedLines == 3) score += 500;
-    else if (removedLines >= 4) score += 800;
+    if (removedLines == 1) score += SCORE_SINGLE;
+    else if (removedLines == 2) score += SCORE_DOUBLE;
+    else if (removedLines == 3) score += SCORE_TRIPLE;
+    else if (removedLines >= 4) score += SCORE_TETRIS;
 }
 
 int removeLine()

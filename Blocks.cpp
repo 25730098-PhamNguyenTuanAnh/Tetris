@@ -1,22 +1,15 @@
 #include "Blocks.h"
 
-Blocks::Blocks()
+Blocks::Blocks(int startX, int startY)
 {
-    x = 5;
-    y = 0;
+    x = startX;
+    y = startY;
 }
 
 void Blocks::setPosition(int _x, int _y)
 {
     x = _x;
     y = _y;
-}
-
-void Blocks::spawn(char blocks[][4][4], int b)
-{
-    for(int i = 0; i < 4; i++)
-        for(int j = 0; j < 4; j++)
-            shape[i][j] = blocks[b][i][j];
 }
 
 bool Blocks::canMove(int dx, int dy)

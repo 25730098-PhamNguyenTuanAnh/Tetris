@@ -19,7 +19,7 @@ void Blocks::spawn(char blocks[][4][4], int b)
             shape[i][j] = blocks[b][i][j];
 }
 
-bool Blocks::canMove(int dx, int dy)
+bool Blocks::canMove(int dx, int dy) const
 {
     for(int i = 0; i < 4; i++)
         for(int j = 0; j < 4; j++)
@@ -60,7 +60,7 @@ void Blocks::delFromBoard()
                 board[y + i][x + j] = ' ';
 }
 
-bool Blocks::canRotate(char temp[4][4])
+bool Blocks::canRotate(char temp[4][4]) const
 {
     for(int i = 0; i < 4; i++)
         for(int j = 0; j < 4; j++)

@@ -21,7 +21,7 @@ public:
 
     void spawn(char blocks[][4][4], int b);
 
-    bool canMove(int dx, int dy);
+    bool canMove(int dx, int dy) const;
 
     void move(int dx, int dy);
 
@@ -29,7 +29,7 @@ public:
 
     void delFromBoard();
 
-    bool canRotate(char temp[4][4]);
+    bool canRotate(char temp[4][4]) const;
 
     virtual void rotate();
 };

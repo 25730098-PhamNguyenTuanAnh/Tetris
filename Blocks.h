@@ -1,8 +1,8 @@
 #ifndef BLOCKS_H
 #define BLOCKS_H
 
-#define H 20
-#define W 15
+constexpr int H = 20;
+constexpr int W = 15;
 
 extern char board[H][W];
 

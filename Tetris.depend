@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1778463910 source:c:\users\albert\desktop\tetris\tetris\blocks.cpp
+	"Blocks.h"
+
+1778463910 c:\users\albert\desktop\tetris\tetris\blocks.h
+
+1778464750 source:c:\users\albert\desktop\tetris\tetris\main.cpp
+	"Blocks.h"
+	<iostream>
+	<conio.h>
+	<ctime>
+

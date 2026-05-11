@@ -1,0 +1,35 @@
+#ifndef BLOCKS_H
+#define BLOCKS_H
+
+#define H 20
+#define W 15
+
+extern char board[H][W];
+
+class Blocks
+{
+private:
+    char shape[4][4];
+    int x, y;
+
+public:
+    Blocks();
+
+    void setPosition(int _x, int _y);
+
+    void spawn(char blocks[][4][4], int b);
+
+    bool canMove(int dx, int dy);
+
+    void move(int dx, int dy);
+
+    void toBoard();
+
+    void delFromBoard();
+
+    bool canRotate(char temp[4][4]);
+
+    virtual void rotate();
+};
+
+#endif

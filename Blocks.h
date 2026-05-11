@@ -19,6 +19,8 @@ public:
 
     void setPosition(int _x, int _y);
 
+    void spawn(char blocks[][4][4], int b);
+
     bool canMove(int dx, int dy);
 
     void move(int dx, int dy);

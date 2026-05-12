@@ -138,7 +138,7 @@ int removeLine()
 int main()
 {
     srand(time(0));
-
+     // Doi tuong quan ly khoi dang roi
     Blocks currentBlock;
 
     b = rand() % 7;

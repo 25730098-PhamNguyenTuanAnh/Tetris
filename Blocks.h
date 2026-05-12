@@ -19,6 +19,7 @@ public:
 
     void spawn(char blocks[][4][4], int b);// Copy hinh dang khoi vao shape
 
+    // Kiem tra khoi co the di chuyen hay khong
     bool canMove(int dx, int dy);
 
     void move(int dx, int dy);

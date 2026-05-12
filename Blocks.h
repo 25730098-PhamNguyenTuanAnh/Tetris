@@ -25,7 +25,7 @@ public:
     void move(int dx, int dy);
     // Ghi khoi hien tai len board
     void toBoard();
-
+    // Xoa vi tri cu cua khoi tren board
     void delFromBoard();
 
     bool canRotate(char temp[4][4]);

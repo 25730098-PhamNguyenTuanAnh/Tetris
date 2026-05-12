@@ -5,7 +5,7 @@
 #define W 15
 
 extern char board[H][W];
-
+// Class quan ly khoi Tetris dang roif
 class Blocks
 {
 private:

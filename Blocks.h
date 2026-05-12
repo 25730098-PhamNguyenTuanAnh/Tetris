@@ -27,7 +27,7 @@ public:
     void toBoard();
     // Xoa vi tri cu cua khoi tren board
     void delFromBoard();
-
+    // Kiem tra khoi co the xoay hay khong
     bool canRotate(char temp[4][4]);
 
     virtual void rotate();

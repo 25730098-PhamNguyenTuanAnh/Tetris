@@ -17,7 +17,7 @@ public:
 
     void setPosition(int _x, int _y);
 
-    void spawn(char blocks[][4][4], int b);
+    void spawn(char blocks[][4][4], int b);// Copy hinh dang khoi vao shape
 
     bool canMove(int dx, int dy);
 

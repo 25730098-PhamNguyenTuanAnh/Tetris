@@ -5,7 +5,7 @@ constexpr int H = 20;
 constexpr int W = 15;
 
 extern char board[H][W];
-// Class quan ly khoi Tetris dang roif
+// Class quan ly khoi Tetris dang roi
 class Blocks
 {
 protected:
@@ -21,7 +21,7 @@ public:
 
     void spawn(char blocks[][4][4], int b);// Copy hinh dang khoi vao shape
 
-    // Kiem tra khoi co the di chuyen hay khongg
+    // Kiem tra khoi co the di chuyen hay khong
     bool canMove(int dx, int dy) const;
     // Di chuyen khoi theo dx, dy
     void move(int dx, int dy);

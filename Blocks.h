@@ -23,7 +23,7 @@ public:
     bool canMove(int dx, int dy);
     // Di chuyen khoi theo dx, dy
     void move(int dx, int dy);
-
+    // Ghi khoi hien tai len board
     void toBoard();
 
     void delFromBoard();

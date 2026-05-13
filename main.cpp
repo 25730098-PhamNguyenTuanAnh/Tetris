@@ -156,16 +156,103 @@ int removeLine()
     return removed;
 }
 
+// Kiểm tra game có kết thúc hay chưa.
+// Ý tưởng:
+// - Sau khi block cũ chạm đáy / chạm block khác, game sẽ spawn block mới.
+// - Nếu block mới vừa spawn ra mà đã không thể đặt tại vị trí hiện tại,
+//   nghĩa là vùng spawn đã bị chiếm.
+// - Khi vùng spawn bị chiếm, người chơi không còn chỗ để tiếp tục.
+// - Vì vậy game over.
+// canMove(0, 0) nghĩa là:
+// - không di chuyển sang trái/phải
+// - không di chuyển xuống
+// - chỉ kiểm tra block hiện tại có hợp lệ ở vị trí hiện tại không
+bool isGameOver(const Blocks& currentBlock)
+{
+    return !currentBlock.canMove(0, 0);
+}
+
+// Hiển thị màn hình Game Over và hỏi người chơi muốn làm gì tiếp theo.
+//
+// Trả về:
+// - true  nếu người chơi chọn R/r để restart
+// - false nếu người chơi chọn Q/q để quit
+bool showGameOverScreen()
+{
+    // Vẽ lại board lần cuối để người chơi thấy trạng thái lúc thua
+    draw();
+
+    cout << endl;
+    cout << "==============================" << endl;
+    cout << "         GAME OVER!           " << endl;
+    cout << "==============================" << endl;
+
+    // Hiển thị điểm cuối cùng trước khi reset hoặc thoát
+    cout << "   Final Score : " << score << endl;
+
+    cout << "------------------------------" << endl;
+    cout << "   [R] Restart Game           " << endl;
+    cout << "   [Q] Quit Game              " << endl;
+    cout << "==============================" << endl;
+
+    char choice;
+
+    // Lặp cho đến khi người chơi nhập đúng phím hợp lệ.
+    //
+    // Các phím hợp lệ:
+    // - R/r: chơi lại
+    // - Q/q: thoát game
+    //
+    // Những phím khác sẽ bị bỏ qua.
+    do
+    {
+        choice = getch();
+    }
+    while (
+        choice != 'r' &&
+        choice != 'R' &&
+        choice != 'q' &&
+        choice != 'Q'
+    );
+
+    // Nếu người chơi chọn R/r thì trả về true để main() reset game.
+    // Nếu chọn Q/q thì trả về false để main() break khỏi game loop.
+    return choice == 'r' || choice == 'R';
+}
+
+// Reset toàn bộ trạng thái cần thiết để bắt đầu lại game.
+//
+// Lưu ý:
+// - initBoard() chỉ reset phần board.
+// - resetGame() reset cả board, điểm, tốc độ và block hiện tại.
+// Vì vậy phần restart nên gọi resetGame(), không chỉ gọi initBoard().
+void resetGame(Blocks& currentBlock, char blocks[][4][4])
+{
+    // Xóa toàn bộ board cũ và dựng lại tường + vùng chơi trống
+    initBoard();
+    // Reset điểm về ban đầu
+    score = 0;
+    // Reset tốc độ rơi về ban đầu
+    speed = 500;
+    // Đưa block hiện tại về vị trí spawn mặc định
+    currentBlock.setPosition(5, 0);
+    // Chọn ngẫu nhiên loại block mới
+    blockType = rand() % 7;
+    // Gán hình dạng block mới cho currentBlock
+    currentBlock.spawn(blocks, blockType);
+}
+
 int main()
 {
     srand(time(0));
+    // board nên được vẽ trước khi khởi tạo blocks
+    initBoard(); 
      // Doi tuong quan ly khoi dang roi
     Blocks currentBlock;
 
     blockType = rand() % 7;
     currentBlock.spawn(blocks, blockType);
 
-    initBoard();
 
     while (1)
     {
@@ -209,6 +296,14 @@ int main()
             currentBlock.setPosition(5, 0);
             blockType = rand() % 7;
             currentBlock.spawn(blocks, blockType);
+
+            if (isGameOver(currentBlock))
+            {
+                if (!showGameOverScreen())
+                    break;
+
+                resetGame(currentBlock, blocks);
+            }
         }
 
         currentBlock.toBoard();

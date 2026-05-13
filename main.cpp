@@ -2,6 +2,9 @@
 #include <iostream>
 #include <conio.h>
 #include <ctime>
+#include <iomanip>
+#include <fstream>
+#include <string>
 using namespace std;
 
 char board[H][W] = {};
@@ -29,6 +32,18 @@ int score = 0;
 int totalLinesCleared = 0;
 int totalPiecesPlaced = 0;
 time_t gameStartTime;
+
+// Dùng để lưu dữ liệu score vào file
+struct ScoreRecord
+{
+    string nickname;
+    int score;
+    int linesCleared;
+    int levelReached;
+    int piecesPlaced;
+    int timePlayed;
+    double piecesPerSecond;
+};
 
 char blocks[][4][4] ={
         {{' ','I',' ',' '},
@@ -207,35 +222,59 @@ bool isGameOver(const Blocks& currentBlock)
     return !currentBlock.canMove(0, 0);
 }
 
-// Hiển thị màn hình Game Over và hỏi người chơi muốn làm gì tiếp theo.
+// Hiển thị thống kê của phiên chơi khi game kết thúc.
 //
-// Trả về:
-// - true  nếu người chơi chọn R/r để restart
-// - false nếu người chơi chọn Q/q để quit
-bool showGameOverScreen()
+// Chức năng:
+// - Vẽ lại board cuối cùng
+// - Hiển thị score và thống kê game
+//
+// Lưu ý:
+// - Hàm này chỉ hiển thị thông tin.
+// - Không xử lý restart hoặc quit game.
+void showGameOverScreen()
 {
-    // Vẽ lại board lần cuối để người chơi thấy trạng thái lúc thua
+    // Vẽ lại trạng thái board cuối cùng
     draw();
 
-    int timePlayed = (int)difftime(time(0), gameStartTime);
+    // Tính tổng thời gian chơi
+    int timePlayed =
+        (int)difftime(time(0), gameStartTime);
+
+    // Tính số block đặt trung bình mỗi giây
     double piecesPerSecond = 0;
 
+    // Tránh chia cho 0
     if (timePlayed > 0)
-        piecesPerSecond = (double)totalPiecesPlaced / timePlayed;
+        piecesPerSecond =
+            (double)totalPiecesPlaced / timePlayed;
 
     cout << endl;
     cout << "==============================" << endl;
     cout << "         GAME OVER!           " << endl;
     cout << "==============================" << endl;
 
-    // Hiển thị điểm cuối cùng trước khi reset hoặc thoát
+    // Hiển thị thống kê của phiên chơi
     cout << "   Final Score     : " << score << endl;
     cout << "   Lines Cleared   : " << totalLinesCleared << endl;
     cout << "   Level Reached   : " << level << endl;
     cout << "   Pieces Placed   : " << totalPiecesPlaced << endl;
     cout << "   Time Played     : " << timePlayed << " sec" << endl;
+
+    // Hiển thị số thực với 2 chữ số thập phân
+    cout << fixed << setprecision(2);
+
     cout << "   Pieces / Second : " << piecesPerSecond << endl;
 
+    cout << "==============================" << endl;
+}
+
+// Hỏi người chơi muốn restart hay quit game.
+//
+// Trả về:
+// - true  -> restart game
+// - false -> quit game
+bool askRestartOrQuit()
+{
     cout << "------------------------------" << endl;
     cout << "   [R] Restart Game           " << endl;
     cout << "   [Q] Quit Game              " << endl;
@@ -243,13 +282,7 @@ bool showGameOverScreen()
 
     char choice;
 
-    // Lặp cho đến khi người chơi nhập đúng phím hợp lệ.
-    //
-    // Các phím hợp lệ:
-    // - R/r: chơi lại
-    // - Q/q: thoát game
-    //
-    // Những phím khác sẽ bị bỏ qua.
+    // Chỉ chấp nhận phím R/r hoặc Q/q
     do
     {
         choice = getch();
@@ -261,9 +294,64 @@ bool showGameOverScreen()
         choice != 'Q'
     );
 
-    // Nếu người chơi chọn R/r thì trả về true để main() reset game.
-    // Nếu chọn Q/q thì trả về false để main() break khỏi game loop.
+    // Nếu người chơi chọn R/r thì restart game
     return choice == 'r' || choice == 'R';
+}
+
+// Lưu thông tin game hiện tại vào file highscore.txt
+// với struct ScoreRecord
+void saveHighScore()
+{
+    ScoreRecord record;
+
+    cout << endl;
+    cout << "Enter nickname: ";
+    cin >> record.nickname;
+
+    // Tính tổng thời gian chơi
+    int timePlayed =
+        (int)difftime(time(0), gameStartTime);
+
+    // Tính số block đặt trung bình mỗi giây
+    double piecesPerSecond = 0;
+
+    // Tránh chia cho 0
+    if (timePlayed > 0)
+    {
+        piecesPerSecond =
+            (double)totalPiecesPlaced / timePlayed;
+    }
+
+    // Gán dữ liệu game hiện tại vào record
+    record.score = score;
+    record.linesCleared = totalLinesCleared;
+    record.levelReached = level;
+    record.piecesPlaced = totalPiecesPlaced;
+    record.timePlayed = timePlayed;
+    record.piecesPerSecond = piecesPerSecond;
+
+    // Mở file ở chế độ append
+    // Dữ liệu mới sẽ được thêm vào cuối file
+    ofstream file("highscore.txt", ios::app);
+
+    // Kiểm tra mở file thành công
+    if (file.is_open())
+    {
+        // Ghi dữ liệu vào file
+        file
+            << "nickname=" << record.nickname << " "
+            << "score=" << record.score << " "
+            << "linesCleared=" << record.linesCleared << " "
+            << "level=" << record.levelReached << " "
+            << "piecesPlaced=" << record.piecesPlaced << " "
+            << "timePlayed=" << record.timePlayed << " "
+            << fixed << setprecision(2)
+            << "piecesPerSecond=" << record.piecesPerSecond
+            << endl;
+
+        // Đóng file sau khi ghi xong
+        file.close();
+    }
 }
 
 // Reset toàn bộ trạng thái cần thiết để bắt đầu lại game.
@@ -278,10 +366,8 @@ void resetGame(Blocks& currentBlock, char blocks[][4][4])
     initBoard();
     // Reset điểm về ban đầu
     score = 0;
-    // Reset level
-    level = 1;
-    // Reset tốc độ rơi về ban đầu
-    speed = 500;
+    // reset level & speed theo score
+    updateLevel();
     // Reset line cleared
     totalLinesCleared = 0;
     // reset pieces placed
@@ -337,6 +423,9 @@ int main()
             currentBlock.toBoard();
             totalPiecesPlaced++;
 
+            // Tăng số lượng block đã được đặt xuống board
+            totalPiecesPlaced++;
+
             int removed = removeLine();
 
             if (removed >= 1)
@@ -352,9 +441,14 @@ int main()
 
             if (isGameOver(currentBlock))
             {
-                if (!showGameOverScreen())
+                // Hiển thị thống kê game over
+                showGameOverScreen();
+                // Luôn lưu score trước khi người chơi chọn restart hoặc quit
+                saveHighScore();
+                // Sau khi đã lưu, mới hỏi restart hoặc quit
+                if (!askRestartOrQuit())
                     break;
-
+                // Reset game nếu người chơi chọn restart
                 resetGame(currentBlock, blocks);
             }
         }

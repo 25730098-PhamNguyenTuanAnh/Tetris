@@ -145,4 +145,6 @@ public:
     }
 };
 
+Blocks* createBlock(int type, int startX, int startY);
+
 #endif

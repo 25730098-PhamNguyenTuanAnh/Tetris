@@ -385,7 +385,9 @@ void resetGame(Blocks& currentBlock, char blocks[][4][4])
 int main()
 {
     srand(time(0));
-     // Doi tuong quan ly khoi dang roi
+
+    Blocks* current = createBlock(rand() % 7, 5, 0);
+
     Blocks currentBlock;
     // start game
     resetGame(currentBlock, blocks);
@@ -458,5 +460,6 @@ int main()
         _sleep(speed);
     }
 
+    delete current;
     return 0;
 }

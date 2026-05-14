@@ -94,3 +94,16 @@ void Blocks::rotate()
                 shape[i][j] = temp[i][j];
     }
 }
+
+Blocks* createBlock(int type, int startX, int startY) {
+    switch (type) {
+        case 0: return new IBlock(startX, startY);
+        case 1: return new OBlock(startX, startY);
+        case 2: return new TBlock(startX, startY);
+        case 3: return new SBlock(startX, startY);
+        case 4: return new ZBlock(startX, startY);
+        case 5: return new LBlock(startX, startY);
+        case 6: return new JBlock(startX, startY);
+        default: return new TBlock(startX, startY);
+    }
+}

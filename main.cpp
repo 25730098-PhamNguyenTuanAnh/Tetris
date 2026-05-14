@@ -97,6 +97,7 @@ void initBoard()
                 board[i][j] = ' ';
 }
 
+// Ve board ra terminal. Moi o duoc in bang hai ky tu de luoi nhin vuong vuc hon.
 void draw()
 {
     system("cls");

@@ -15,6 +15,7 @@ const int SPEED_STEP = 15;
 
 const char* CELL_BORDER = "##";
 const char* CELL_EMPTY = "  ";
+const char* CELL_BLOCK = "[]";
 
 int blockType;
 int speed = 500;
@@ -104,7 +105,7 @@ void draw()
         for (int j = 0 ; j < W ; j++) {
             if (board[i][j] == '#')      cout << CELL_BORDER;
             else if (board[i][j] == ' ') cout << CELL_EMPTY;
-            else                         cout << "[]";
+            else                         cout << CELL_BLOCK;
         }
 }
 

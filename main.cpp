@@ -25,7 +25,6 @@ const char* CELL_BORDER = "##";
 const char* CELL_EMPTY = "  ";
 const char* CELL_BLOCK = "[]";
 
-int blockType;
 int speed = 500;
 
 int score = 0;
@@ -43,73 +42,6 @@ struct ScoreRecord
     int piecesPlaced;
     int timePlayed;
     double piecesPerSecond;
-};
-
-char blocks[][4][4] ={
-        {{' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '}},
-        {{' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {'I','I','I','I'},
-         {' ',' ',' ',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','T',' ',' '},
-         {'T','T','T',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','S','S',' '},
-         {'S','S',' ',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {'Z','Z',' ',' '},
-         {' ','Z','Z',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {'J',' ',' ',' '},
-         {'J','J','J',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ',' ','L',' '},
-         {'L','L','L',' '},
-         {' ',' ',' ',' '}}
 };
 
 void initBoard()
@@ -360,7 +292,7 @@ void saveHighScore()
 // - initBoard() chỉ reset phần board.
 // - resetGame() reset cả board, điểm, tốc độ và block hiện tại.
 // Vì vậy phần restart nên gọi resetGame(), không chỉ gọi initBoard().
-void resetGame(Blocks& currentBlock, char blocks[][4][4])
+void resetGame(Blocks*& current)
 {
     // Xóa toàn bộ board cũ và dựng lại tường + vùng chơi trống
     initBoard();
@@ -374,58 +306,39 @@ void resetGame(Blocks& currentBlock, char blocks[][4][4])
     totalPiecesPlaced = 0;
     // reset start time
     gameStartTime = time(0);
-    // Đưa block hiện tại về vị trí spawn mặc định
-    currentBlock.setPosition(5, 0);
-    // Chọn ngẫu nhiên loại block mới
-    blockType = rand() % 7;
-    // Gán hình dạng block mới cho currentBlock
-    currentBlock.spawn(blocks, blockType);
+    // Giải phóng block cũ và sinh block mới qua factory
+    delete current;
+    current = createBlock(rand() % 7, 5, 0);
 }
 
 int main()
 {
     srand(time(0));
-
+    initBoard();
+    gameStartTime = time(0);
     Blocks* current = createBlock(rand() % 7, 5, 0);
-
-    Blocks currentBlock;
-    // start game
-    resetGame(currentBlock, blocks);
 
     while (1)
     {
-        currentBlock.delFromBoard();
+        current->delFromBoard();
 
         if (kbhit())
         {
             char c = getch();
-
-            if (c == 'a' && currentBlock.canMove(-1, 0))
-                currentBlock.move(-1, 0);
-
-            if (c == 'd' && currentBlock.canMove(1, 0))
-                currentBlock.move(1, 0);
-
-            if (c == 'x' && currentBlock.canMove(0, 1))
-                currentBlock.move(0, 1);
-
-            if (c == 'w')
-                currentBlock.rotate();
-
-            if (c == 'q')
-                break;
+            if (c == 'a' && current->canMove(-1, 0)) current->moveX(-1);
+            if (c == 'd' && current->canMove( 1, 0)) current->moveX( 1);
+            if (c == 'x' && current->canMove( 0, 1)) current->moveY( 1);
+            if (c == 'w') current->rotate();
+            if (c == 'q') break;
         }
 
-        if (currentBlock.canMove(0, 1))
+        if (current->canMove(0, 1))
         {
-            currentBlock.move(0, 1);
+            current->moveY(1);
         }
         else
         {
-            currentBlock.toBoard();
-            totalPiecesPlaced++;
-
-            // Tăng số lượng block đã được đặt xuống board
+            current->toBoard();
             totalPiecesPlaced++;
 
             int removed = removeLine();
@@ -437,11 +350,10 @@ int main()
                 updateLevel();
             }
 
-            currentBlock.setPosition(5, 0);
-            blockType = rand() % 7;
-            currentBlock.spawn(blocks, blockType);
+            delete current;
+            current = createBlock(rand() % 7, 5, 0);
 
-            if (isGameOver(currentBlock))
+            if (isGameOver(*current))
             {
                 // Hiển thị thống kê game over
                 showGameOverScreen();
@@ -451,11 +363,11 @@ int main()
                 if (!askRestartOrQuit())
                     break;
                 // Reset game nếu người chơi chọn restart
-                resetGame(currentBlock, blocks);
+                resetGame(current);
             }
         }
 
-        currentBlock.toBoard();
+        current->toBoard();
         draw();
         _sleep(speed);
     }

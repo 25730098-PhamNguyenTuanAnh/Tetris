@@ -33,6 +33,10 @@ public:
     bool canRotate(char temp[4][4]) const;
 
     virtual void rotate();
+
+    void moveX(int dx);
+    void moveY(int dy);
+
 };
 
 class TBlock : public Blocks {

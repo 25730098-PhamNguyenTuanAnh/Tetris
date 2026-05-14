@@ -103,7 +103,8 @@ void draw()
     system("cls");
 
     for (int i = 0 ; i < H ; i++, cout << endl)
-        for (int j = 0 ; j < W ; j++) {
+        for (int j = 0 ; j < W ; j++)
+        {
             switch (board[i][j])
             {
                 case '#': cout << CELL_BORDER; break;

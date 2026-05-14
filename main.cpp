@@ -16,7 +16,6 @@ const int SCORE_SINGLE = 100;
 const int SCORE_DOUBLE = 300;
 const int SCORE_TRIPLE = 500;
 const int SCORE_TETRIS = 800;
-
 const int SPEED_STEP = 15;
 
 const char* CELL_BORDER = "##";
@@ -25,7 +24,12 @@ const char* CELL_BLOCK = "[]";
 
 int blockType;
 int speed = 500;
+
 int score = 0;
+int totalLinesCleared = 0;
+int totalPiecesPlaced = 0;
+time_t gameStartTime;
+
 char blocks[][4][4] ={
         {{' ','I',' ',' '},
          {' ','I',' ',' '},
@@ -213,13 +217,24 @@ bool showGameOverScreen()
     // Vẽ lại board lần cuối để người chơi thấy trạng thái lúc thua
     draw();
 
+    int timePlayed = (int)difftime(time(0), gameStartTime);
+    double piecesPerSecond = 0;
+
+    if (timePlayed > 0)
+        piecesPerSecond = (double)totalPiecesPlaced / timePlayed;
+
     cout << endl;
     cout << "==============================" << endl;
     cout << "         GAME OVER!           " << endl;
     cout << "==============================" << endl;
 
     // Hiển thị điểm cuối cùng trước khi reset hoặc thoát
-    cout << "   Final Score : " << score << endl;
+    cout << "   Final Score     : " << score << endl;
+    cout << "   Lines Cleared   : " << totalLinesCleared << endl;
+    cout << "   Level Reached   : " << level << endl;
+    cout << "   Pieces Placed   : " << totalPiecesPlaced << endl;
+    cout << "   Time Played     : " << timePlayed << " sec" << endl;
+    cout << "   Pieces / Second : " << piecesPerSecond << endl;
 
     cout << "------------------------------" << endl;
     cout << "   [R] Restart Game           " << endl;
@@ -267,6 +282,12 @@ void resetGame(Blocks& currentBlock, char blocks[][4][4])
     level = 1;
     // Reset tốc độ rơi về ban đầu
     speed = 500;
+    // Reset line cleared
+    totalLinesCleared = 0;
+    // reset pieces placed
+    totalPiecesPlaced = 0;
+    // reset start time
+    gameStartTime = time(0);
     // Đưa block hiện tại về vị trí spawn mặc định
     currentBlock.setPosition(5, 0);
     // Chọn ngẫu nhiên loại block mới
@@ -278,14 +299,10 @@ void resetGame(Blocks& currentBlock, char blocks[][4][4])
 int main()
 {
     srand(time(0));
-    // board nên được vẽ trước khi khởi tạo blocks
-    initBoard(); 
      // Doi tuong quan ly khoi dang roi
     Blocks currentBlock;
-
-    blockType = rand() % 7;
-    currentBlock.spawn(blocks, blockType);
-
+    // start game
+    resetGame(currentBlock, blocks);
 
     while (1)
     {
@@ -318,11 +335,13 @@ int main()
         else
         {
             currentBlock.toBoard();
+            totalPiecesPlaced++;
 
             int removed = removeLine();
 
             if (removed >= 1)
             {
+                totalLinesCleared += removed;
                 addScore(removed);
                 updateLevel();
             }

@@ -335,6 +335,7 @@ int main()
         else
         {
             currentBlock.toBoard();
+            totalPiecesPlaced++;
 
             int removed = removeLine();
 

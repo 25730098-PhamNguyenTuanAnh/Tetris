@@ -145,7 +145,9 @@ int removeLine()
 int main()
 {
     srand(time(0));
-     // Doi tuong quan ly khoi dang roi
+
+    Blocks* current = createBlock(rand() % 7, 5, 0);
+
     Blocks currentBlock;
 
     blockType = rand() % 7;

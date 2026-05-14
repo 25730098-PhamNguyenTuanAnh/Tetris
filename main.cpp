@@ -13,75 +13,8 @@ const int SCORE_TETRIS = 800;
 
 const int SPEED_STEP = 15;
 
-int blockType;
 int speed = 500;
 int score = 0;
-char blocks[][4][4] ={
-        {{' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '}},
-        {{' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {'I','I','I','I'},
-         {' ',' ',' ',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','T',' ',' '},
-         {'T','T','T',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','S','S',' '},
-         {'S','S',' ',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {'Z','Z',' ',' '},
-         {' ','Z','Z',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {'J',' ',' ',' '},
-         {'J','J','J',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ',' ','L',' '},
-         {'L','L','L',' '},
-         {' ',' ',' ',' '}}
-};
 
 void initBoard()
 {
@@ -145,64 +78,33 @@ int removeLine()
 int main()
 {
     srand(time(0));
-
+    initBoard();
     Blocks* current = createBlock(rand() % 7, 5, 0);
 
-    Blocks currentBlock;
-
-    blockType = rand() % 7;
-    currentBlock.spawn(blocks, blockType);
-
-    initBoard();
-
-    while (1)
-    {
-        currentBlock.delFromBoard();
-
-        if (kbhit())
-        {
+    while (1){
+        current->delFromBoard();
+        if (kbhit()) {
             char c = getch();
-
-            if (c == 'a' && currentBlock.canMove(-1, 0))
-                currentBlock.move(-1, 0);
-
-            if (c == 'd' && currentBlock.canMove(1, 0))
-                currentBlock.move(1, 0);
-
-            if (c == 'x' && currentBlock.canMove(0, 1))
-                currentBlock.move(0, 1);
-
-            if (c == 'w')
-                currentBlock.rotate();
-
-            if (c == 'q')
-                break;
+            if (c == 'a' && current->canMove(-1, 0)) current->moveX(-1);
+            if (c == 'd' && current->canMove( 1, 0)) current->moveX( 1);
+            if (c == 'x' && current->canMove( 0, 1)) current->moveY( 1);
+            if (c == 'w') current->rotate();
+            if (c == 'q') break;
         }
-
-        if (currentBlock.canMove(0, 1))
-        {
-            currentBlock.move(0, 1);
-        }
+        if (current->canMove(0, 1)) current->moveY(1);
         else
         {
-            currentBlock.toBoard();
-
+            current->toBoard();
             int removed = removeLine();
-
-            if (removed >= 1)
-            {
-                addScore(removed);
-            }
-
-            currentBlock.setPosition(5, 0);
-            blockType = rand() % 7;
-            currentBlock.spawn(blocks, blockType);
+            if (removed >= 1) addScore(removed);
+            delete current;
+            current = createBlock(rand() % 7, 5, 0);
         }
 
-        currentBlock.toBoard();
+        current->toBoard();
         draw();
         _sleep(speed);
     }
-
+    delete current;
     return 0;
 }

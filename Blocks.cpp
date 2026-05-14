@@ -107,3 +107,6 @@ Blocks* createBlock(int type, int startX, int startY) {
         default: return new TBlock(startX, startY);
     }
 }
+
+void Blocks::moveX(int dx) { x += dx; }
+void Blocks::moveY(int dy) { y += dy; }

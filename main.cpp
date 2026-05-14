@@ -13,6 +13,8 @@ const int SCORE_TETRIS = 800;
 
 const int SPEED_STEP = 15;
 
+const char* CELL_BORDER = "##";
+
 int blockType;
 int speed = 500;
 int score = 0;
@@ -99,7 +101,7 @@ void draw()
 
     for (int i = 0 ; i < H ; i++, cout << endl)
         for (int j = 0 ; j < W ; j++) {
-            if (board[i][j] == '#')      cout << "##";
+            if (board[i][j] == '#')      cout << CELL_BORDER;
             else if (board[i][j] == ' ') cout << "  ";
             else                         cout << "[]";
         }

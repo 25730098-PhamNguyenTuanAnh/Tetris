@@ -127,19 +127,31 @@ int removeLine()
     int removed = 0;
     int i, j;
 
+    // Duyệt từ dưới lên trên
+    // Bỏ qua hàng cuối vì đó là tường '#'
     for (i = H - 2 ; i > 0 ; i--)
     {
-        for (j = 0 ; j < W ; j++)
+        for (j = 1 ; j < W - 1 ; j++)
+
             if (board[i][j] == ' ')
                 break;
 
-        if (j == W)
+        if (j == W - 1)
         {
             removed++;
 
             for (int ii = i ; ii > 0 ; ii--)
-                for (int jj = 0; jj < W; jj++)
-                    board[ii][jj] = board[ii - 1][jj];
+                // Chỉ copy phần bên trong board
+                // Không copy phần tường '#'
+                for (int jj = 1; jj < W - 1; jj++)
+                    board[ii][jj] = board[ii - 1][jj];// Line hiện tại nhận dữ liệu từ line phía trên
+
+            // Sau khi kéo line xuống:
+            // row[1] sẽ bị duplicate dữ liệu cũ
+            // vì không có row phía trên để copy xuống
+            // -> cần reset lại hàng đầu tiên
+            for (int jj = 1; jj < W - 1; jj++)
+                board[1][jj] = ' '; // Reset ô hiện tại thành khoảng trắng
 
             i++;
 
@@ -150,7 +162,6 @@ int removeLine()
             _sleep(200);
         }
     }
-
     return removed;
 }
 

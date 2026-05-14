@@ -104,9 +104,12 @@ void draw()
 
     for (int i = 0 ; i < H ; i++, cout << endl)
         for (int j = 0 ; j < W ; j++) {
-            if (board[i][j] == '#')      cout << CELL_BORDER;
-            else if (board[i][j] == ' ') cout << CELL_EMPTY;
-            else                         cout << CELL_BLOCK;
+            switch (board[i][j])
+            {
+                case '#': cout << CELL_BORDER; break;
+                case ' ': cout << CELL_EMPTY;  break;
+                default:  cout << CELL_BLOCK;  break;
+            }
         }
 }
 

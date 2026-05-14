@@ -204,5 +204,6 @@ int main()
         _sleep(speed);
     }
 
+    delete current;
     return 0;
 }

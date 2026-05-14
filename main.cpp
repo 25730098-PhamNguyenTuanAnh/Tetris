@@ -5,6 +5,9 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <sstream>
 using namespace std;
 
 char board[H][W] = {};
@@ -43,6 +46,12 @@ struct ScoreRecord
     int timePlayed;
     double piecesPerSecond;
 };
+// Dùng để sort score giảm dần
+bool compareScore(const ScoreRecord& a,
+                  const ScoreRecord& b)
+{
+    return a.score > b.score;
+}
 
 void initBoard()
 {
@@ -184,50 +193,157 @@ void showGameOverScreen()
     cout << "==============================" << endl;
     cout << "         GAME OVER!           " << endl;
     cout << "==============================" << endl;
-
     // Hiển thị thống kê của phiên chơi
     cout << "   Final Score     : " << score << endl;
     cout << "   Lines Cleared   : " << totalLinesCleared << endl;
     cout << "   Level Reached   : " << level << endl;
     cout << "   Pieces Placed   : " << totalPiecesPlaced << endl;
     cout << "   Time Played     : " << timePlayed << " sec" << endl;
-
     // Hiển thị số thực với 2 chữ số thập phân
     cout << fixed << setprecision(2);
-
     cout << "   Pieces / Second : " << piecesPerSecond << endl;
-
     cout << "==============================" << endl;
 }
 
-// Hỏi người chơi muốn restart hay quit game.
+// Hiển thị bảng xếp hạng từ file highscore.txt
+//
+// Chức năng:
+// - Đọc toàn bộ score trong file
+// - Sort theo score giảm dần
+// - Hiển thị top 10 người chơi điểm cao nhất
+// - Chờ người chơi nhấn phím để quay lại menu
+void showLeaderboard()
+{
+    ifstream file("highscore.txt");
+
+    cout << endl;
+    cout << "==============================" << endl;
+    cout << "        LEADERBOARD           " << endl;
+    cout << "==============================" << endl;
+
+    // Lưu toàn bộ dữ liệu score đọc từ file
+    vector<ScoreRecord> records;
+    
+    // Nếu không mở được file
+    // nghĩa là chưa có dữ liệu score
+    if (!file.is_open())
+    {
+        cout << "No high score data found." << endl;
+    }
+    else
+    {
+        string line;
+
+        // Đọc từng dòng trong file
+        while (getline(file, line))
+        {
+            ScoreRecord record;
+
+            string temp;
+
+            stringstream ss(line);
+
+            // Parse nickname
+            ss >> temp;
+            record.nickname =
+                temp.substr(temp.find("=") + 1);
+            // Parse score
+            ss >> temp;
+            record.score =
+                stoi(temp.substr(temp.find("=") + 1));
+            // Parse lines cleared
+            ss >> temp;
+            record.linesCleared =
+                stoi(temp.substr(temp.find("=") + 1));
+            // Parse level reached
+            ss >> temp;
+            record.levelReached =
+                stoi(temp.substr(temp.find("=") + 1));
+            // Parse pieces placed
+            ss >> temp;
+            record.piecesPlaced =
+                stoi(temp.substr(temp.find("=") + 1));
+            // Parse time played
+            ss >> temp;
+            record.timePlayed =
+                stoi(temp.substr(temp.find("=") + 1));
+            // Parse pieces per second
+            ss >> temp;
+            record.piecesPerSecond =
+                stod(temp.substr(temp.find("=") + 1));
+            // Thêm record vào danh sách
+            records.push_back(record);
+        }
+
+        // Đóng file sau khi đọc xong
+        file.close();
+
+        // Sort score giảm dần
+        sort(records.begin(),
+             records.end(),
+             compareScore);
+
+        // Hiển thị top 10 score cao nhất
+        for (int i = 0;
+             i < records.size() && i < 10;
+             i++)
+        {
+            cout
+                << i + 1 << ". "
+                << records[i].nickname
+                << " | Score: "
+                << records[i].score
+                << " | Level: "
+                << records[i].levelReached
+                << endl;
+        }
+    }
+    cout << "==============================" << endl;
+    cout << "Press any key to return..." << endl;
+
+    // Chờ người chơi nhấn phím để quay lại menu
+    getch();
+}
+
+// Xử lý menu sau khi game over.
+//
+// Menu gồm:
+// - R/r: restart game
+// - L/l: xem leaderboard
+// - Q/q: quit game
 //
 // Trả về:
 // - true  -> restart game
 // - false -> quit game
-bool askRestartOrQuit()
+bool handleGameOverMenu()
 {
-    cout << "------------------------------" << endl;
-    cout << "   [R] Restart Game           " << endl;
-    cout << "   [Q] Quit Game              " << endl;
-    cout << "==============================" << endl;
-
     char choice;
 
-    // Chỉ chấp nhận phím R/r hoặc Q/q
-    do
+    while (true)
     {
-        choice = getch();
-    }
-    while (
-        choice != 'r' &&
-        choice != 'R' &&
-        choice != 'q' &&
-        choice != 'Q'
-    );
+        cout << "------------------------------" << endl;
+        cout << "   [R] Restart Game           " << endl;
+        cout << "   [L] Show Leaderboard       " << endl;
+        cout << "   [Q] Quit Game              " << endl;
+        cout << "==============================" << endl;
 
-    // Nếu người chơi chọn R/r thì restart game
-    return choice == 'r' || choice == 'R';
+        // Đọc phím người chơi nhập
+        choice = getch();
+        // Restart game
+        if (choice == 'r' || choice == 'R')
+            return true;
+        // Quit game
+        if (choice == 'q' || choice == 'Q')
+            return false;
+        // Hiển thị leaderboard
+        if (choice == 'l' || choice == 'L')
+        {
+            showLeaderboard();
+            // Hiển thị lại game over screen
+            // sau khi quay về từ leaderboard
+            showGameOverScreen();
+        }
+    }
 }
 
 // Lưu thông tin game hiện tại vào file highscore.txt
@@ -360,7 +476,7 @@ int main()
                 // Luôn lưu score trước khi người chơi chọn restart hoặc quit
                 saveHighScore();
                 // Sau khi đã lưu, mới hỏi restart hoặc quit
-                if (!askRestartOrQuit())
+                if (!handleGameOverMenu())
                     break;
                 // Reset game nếu người chơi chọn restart
                 resetGame(current);

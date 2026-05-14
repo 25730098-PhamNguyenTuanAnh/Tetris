@@ -26,7 +26,7 @@ This project recreates the classic Tetris experience in a terminal environment. 
 
 - 7 standard tetrominoes with rotation support
 - Scoring system: 100 / 300 / 500 / 800 points for 1 / 2 / 3 / 4 lines cleared
-- Level progression: speed increases every 10 lines cleared
+- Level progression: speed increases as score reaches level thresholds
 - Next-piece preview
 - Pause menu with resume, restart, and quit options
 - Game-over screen with session statistics (lines cleared, level reached, pieces placed, time played, pieces per second)

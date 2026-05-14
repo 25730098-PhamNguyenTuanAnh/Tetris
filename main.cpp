@@ -13,6 +13,10 @@ const int SCORE_TETRIS = 800;
 
 const int SPEED_STEP = 15;
 
+const char* CELL_BORDER = "##";
+const char* CELL_EMPTY = "  ";
+const char* CELL_BLOCK = "[]";
+
 int blockType;
 int speed = 500;
 int score = 0;
@@ -93,13 +97,21 @@ void initBoard()
                 board[i][j] = ' ';
 }
 
+// Ve board ra terminal. Moi o duoc in bang hai ky tu de luoi nhin vuong vuc hon.
 void draw()
 {
     system("cls");
 
     for (int i = 0 ; i < H ; i++, cout << endl)
         for (int j = 0 ; j < W ; j++)
-            cout << board[i][j];
+        {
+            switch (board[i][j])
+            {
+                case '#': cout << CELL_BORDER; break;
+                case ' ': cout << CELL_EMPTY;  break;
+                default:  cout << CELL_BLOCK;  break;
+            }
+        }
 }
 
 void addScore(int removedLines)

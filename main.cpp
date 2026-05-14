@@ -6,6 +6,12 @@ using namespace std;
 
 char board[H][W] = {};
 
+const int LEVEL_SCORE_STEP = 1000;
+const int MAX_LEVEL = 10;
+const int MIN_SPEED = 100;
+
+int level = 1;
+
 const int SCORE_SINGLE = 100;
 const int SCORE_DOUBLE = 300;
 const int SCORE_TRIPLE = 500;
@@ -102,6 +108,8 @@ void draw()
 {
     system("cls");
 
+    cout << "Score: " << score << " | Level: " << level << " | Speed: " << speed << endl;
+
     for (int i = 0 ; i < H ; i++, cout << endl)
         for (int j = 0 ; j < W ; j++)
         {
@@ -120,6 +128,23 @@ void addScore(int removedLines)
     else if (removedLines == 2) score += SCORE_DOUBLE;
     else if (removedLines == 3) score += SCORE_TRIPLE;
     else if (removedLines >= 4) score += SCORE_TETRIS;
+}
+
+void updateLevel()
+{
+    // Level tăng mỗi khi score đạt thêm 1000 điểm
+    level = score / LEVEL_SCORE_STEP + 1;
+
+    // Giới hạn level tối đa để game không tăng tốc vô hạn
+    if (level > MAX_LEVEL)
+        level = MAX_LEVEL;
+
+    // Speed càng nhỏ thì block rơi càng nhanh
+    speed = 500 - (level - 1) * SPEED_STEP;
+
+    // Giới hạn speed tối thiểu để game vẫn còn chơi được
+    if (speed < MIN_SPEED)
+        speed = MIN_SPEED;
 }
 
 int removeLine()
@@ -154,9 +179,6 @@ int removeLine()
                 board[1][jj] = ' '; // Reset ô hiện tại thành khoảng trắng
 
             i++;
-
-            if (speed > 100)
-                speed -= SPEED_STEP;
 
             draw();
             _sleep(200);
@@ -241,6 +263,8 @@ void resetGame(Blocks& currentBlock, char blocks[][4][4])
     initBoard();
     // Reset điểm về ban đầu
     score = 0;
+    // Reset level
+    level = 1;
     // Reset tốc độ rơi về ban đầu
     speed = 500;
     // Đưa block hiện tại về vị trí spawn mặc định
@@ -300,6 +324,7 @@ int main()
             if (removed >= 1)
             {
                 addScore(removed);
+                updateLevel();
             }
 
             currentBlock.setPosition(5, 0);
